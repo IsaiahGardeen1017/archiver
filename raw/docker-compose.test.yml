@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  deno-app:
+    image: docker-file-vault
+    container_name: docker-file-vault-test
+    ports:
+      - "82:8000"
+    volumes:
+      - deno_files_volume:/app/volume-file-dir
+
+volumes:
+  deno_files_volume:

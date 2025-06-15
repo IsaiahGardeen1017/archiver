@@ -1,0 +1,67 @@
+import { DB } from 'https://deno.land/x/sqlite/mod.ts';
+
+const DBPath = 'volume/dqlite.db';
+
+let db: DB;
+function dbRef(): DB {
+	if (!db) {
+		db = new DB('DBPath');
+	}
+	return db;
+}
+
+export type Entry = {
+	id?: number;
+	guid?: string;
+	fileType?: string;
+	description?: string;
+	source?: string;
+	tags?: string[];
+};
+
+export function initializeSQLite() {
+	const db = dbRef();
+	db.execute(`
+        CREATE TABLE IF NOT EXISTS entry (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            guid TEXT
+            fileType TEXT
+            description TEXT
+            source TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS tags (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT UNIQUE NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS entry_tags (
+            metadata_id TEXT NOT NULL,
+            tag_id INTEGER NOT NULL,
+            PRIMARY KEY (metadata_id, tag_id),
+            FOREIGN KEY (metadata_id) REFERENCES entry(id) ON DELETE CASCADE,
+            FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+        );
+    `);
+}
+
+export async function insertTag(tag: string) {
+}
+
+export async function getAllTags(): string[] {
+}
+
+export async function deleteTag(tag: string) {
+}
+
+export async function insertEntry(entry: Entry) {
+}
+
+export async function getEntry(id: string): Entry {
+}
+
+export async function getAllEntry(): Entry[] {
+}
+
+export async function deleteEntry(id: string) {
+}
