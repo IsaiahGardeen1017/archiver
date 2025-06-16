@@ -8,8 +8,10 @@ export default function App({ Component }: PageProps) {
         <title>front</title>
         <link rel="stylesheet" href="/styles.css" />
       </head>
-      <body>
-        <Component />
+      <body class="bg-slate-700">
+        <div class="bg-cyan-950">
+            <Component />
+        </div>
       </body>
     </html>
   );
