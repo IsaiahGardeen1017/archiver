@@ -1,0 +1,136 @@
+import { useState } from "preact/hooks";
+
+const onSubmit = (e: Event) => {
+  e.preventDefault(); // Prevent default form submission
+  console.log("Yo Gotti - Form Submitted!");
+  // You can access form data here if needed,
+  // e.g., const formData = new FormData(e.target as HTMLFormElement);
+  // console.log(formData.get("desc"));
+  // console.log(formData.get("src"));
+};
+
+export default function Uploader() {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleFileChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files ? target.files[0] : null;
+    updateFile(file);
+  };
+
+  const handleDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer?.files ? e.dataTransfer.files[0] : null;
+    updateFile(file);
+  };
+
+  const updateFile = (file: File | null) => {
+    setSelectedFile(file);
+    if (file) {
+      if (file.type.startsWith("image/") || file.type === "image/gif") {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewUrl(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setPreviewUrl(null); // Clear preview for non-image files
+      }
+    } else {
+      setPreviewUrl(null);
+    }
+  };
+
+  return (
+    <div>
+      <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
+        <img
+          class="my-6"
+          src="/welcome/w1.webp"
+          width="500"
+          height="500"
+          alt="Really cool skeletons"
+        />
+        <h1 class="text-4xl font-bold">Add new entry</h1>
+        <form onSubmit={onSubmit} className="m-1 p-1">
+          <label>
+            Description:{" "}
+            <input
+              name="desc"
+              className="m-2 ps-2 bg-slate-400 focus:bg-slate-300 text-black"
+            />
+          </label>
+          <br />
+          <label>
+            Source:{" "}
+            <input
+              name="src"
+              className="m-2 ps-2 bg-slate-400 focus:bg-slate-300 text-black"
+            />
+          </label>
+          <br />
+          <div
+            className={`relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-300
+                       ${
+              isDragOver
+                ? "border-blue-500 bg-blue-100"
+                : "border-gray-400 bg-gray-200"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <input
+              type="file"
+              name="fileUpload"
+              id="fileUpload"
+              onChange={handleFileChange}
+              className="absolute inset-0 opacity-0 cursor-pointer"
+            />
+            <p className="text-gray-700">
+              {selectedFile
+                ? (
+                  <span>
+                    Selected file: <strong>{selectedFile.name}</strong>
+                  </span>
+                )
+                : (
+                  "Drag & drop your file here, or click to select"
+                )}
+            </p>
+            {previewUrl && (
+              <div className="mt-4">
+                <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
+                <img
+                  src={previewUrl}
+                  alt="File preview"
+                  className="max-w-full h-auto max-h-64 object-contain mx-auto rounded-md shadow-md"
+                />
+              </div>
+            )}
+            {selectedFile && !previewUrl && (
+              <p className="mt-2 text-sm text-gray-500">
+                (No preview available for this file type)
+              </p>
+            )}
+          </div>
+          <button className="bg-gray-600 hover:bg-gray-400 rounded m-1 p-1 border-black border-2 mt-4">
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
