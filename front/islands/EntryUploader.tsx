@@ -1,8 +1,18 @@
-const onSubmit = () => {
-  console.log("I will do this part later");
-};
+import { useEffect, useState } from "preact/hooks";
+
+const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 export default function EntryUplaoder() {
+  const onSubmit = (event: Event) => {
+    event.preventDefault(); // Prevent default form submission
+    console.log("Form submitted!");
+    if (selectedFile) {
+      console.log("Selected file:", selectedFile.name, selectedFile.type);
+    } else {
+      console.log("No file selected.");
+    }
+  };
+
   return (
     <div>
       <h1 class="text-4xl font-bold">Add new entry</h1>
