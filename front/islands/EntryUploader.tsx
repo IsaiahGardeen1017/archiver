@@ -22,6 +22,13 @@ export default function EntryUplaoder() {
             className="m-2 ps-2 bg-slate-400 focus:bg-slate-300 text-black"
           />
         </label>
+
+        <br />
+        <input
+          type="file"
+          accept="image/*,video/*,image/gif" // Accept common image, video, and gif types
+        />
+
         <br />
         <button className="bg-gray-600 hover:bg-gray-400 rounded m-1 p-1 border-black border-2">
           Submit

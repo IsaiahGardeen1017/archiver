@@ -1,4 +1,4 @@
-import EntryUplaoder from "../islands/EntryUploader (Promising).txt";
+import EntryUplaoder from "../islands/EntryUploader.tsx";
 
 export default function Uploader() {
   return (
@@ -12,7 +12,9 @@ export default function Uploader() {
           alt="Really cool skeletons"
         />
       </div>
-      <EntryUplaoder />
+      <div class="flex justify-center items-center">
+        <EntryUplaoder />
+      </div>
     </div>
   );
 }

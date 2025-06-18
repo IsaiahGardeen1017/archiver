@@ -9,6 +9,9 @@ import * as $api_joke from "./routes/api/joke.ts";
 import * as $index from "./routes/index.tsx";
 import * as $upload from "./routes/upload.tsx";
 import * as $Counter from "./islands/Counter.tsx";
+import * as $EntryUploader_Can_Work_txt from "./islands/EntryUploader (Can Work).txt.tsx";
+import * as $EntryUploader_Promising_txt from "./islands/EntryUploader (Promising).txt.tsx";
+import * as $EntryUploader from "./islands/EntryUploader.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -22,6 +25,9 @@ const manifest = {
   },
   islands: {
     "./islands/Counter.tsx": $Counter,
+    "./islands/EntryUploader (Can Work).txt.tsx": $EntryUploader_Can_Work_txt,
+    "./islands/EntryUploader (Promising).txt.tsx": $EntryUploader_Promising_txt,
+    "./islands/EntryUploader.tsx": $EntryUploader,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
