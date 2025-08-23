@@ -7,7 +7,7 @@ services:
     ports:
       - "81:8000"
     volumes:
-      - deno_files_volume_THIS:/app/volume-file-dir
+      - deno_files_volume:/app/volume-file-dir
 
 volumes:
-  deno_files_volume_THIS:
+  deno_files_volume:

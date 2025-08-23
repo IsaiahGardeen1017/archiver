@@ -1,10 +1,10 @@
-import { FILE_STORAGE_URL } from './conf.ts';
+import { config } from '../config.ts';
 import { Entry, insertEntry } from './SQLite/SQLiteFuncs.ts';
 
 export async function newEntryUplaod(file: File, description?: string, source?: string, tags?: string[]): Promise<string> {
 	const data: Uint8Array = await file.bytes();
 
-	const hostname = FILE_STORAGE_URL;
+	const hostname = config.rawUrl;
 	const resp = await fetch(`${hostname}/file`, {
 		method: 'POST',
 		body: data,

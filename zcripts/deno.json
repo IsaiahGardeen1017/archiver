@@ -1,0 +1,13 @@
+{
+    "tasks": {
+        "id": "deno run -A indexDir.ts"
+    },
+    "fmt": {
+        "options": {
+            "useTabs": true,
+            "singleQuote": true,
+            "proseWrap": "never",
+            "lineWidth": 135
+        }
+    }
+}

@@ -6,4 +6,10 @@ Compose things I think
 
 `docker-compose -p dockervolumerthis up -d`
 
-`docker-compose -f docker-compose.test.yml up -d`
+Start instance from scratch
+
+`docker-compose -f docker-compose.2.yml up -d`
+
+Rename (So you can run two at once)
+
+docker rename raw raw2

@@ -1,21 +1,31 @@
 // components/ImageGrid.tsx
 import { Fragment } from "preact";
+import { EntryDisplay } from "./EntryDisplay.tsx";
+import { Handlers, PageProps } from "$fresh/server.ts";
 
-interface ImageGridProps {
-  imageUrls: string[];
-}
+export type ImageGridProps = {
+  references: EntryReference[];
+  //imageUrls: string[];
+};
+
+export type EntryReference = {
+  id?: number;
+  guid?: string;
+  description?: string;
+  source?: string;
+  fileType?: string;
+  tags?: string[];
+  link?: string;
+};
 
 export function EntryList(props: ImageGridProps) {
-  const { imageUrls } = props;
+  const refs = props.references;
   return (
     <div>
-      {imageUrls.map((url, index) => (
-        <img
-          key={index}
-          src={url}
-          alt={`Image ${index + 1}`}
-          style={{ width: "100%", height: "auto", display: "block" }}
-          loading="lazy" // Good practice for many images
+      {refs.map((ref, index) => (
+        <EntryDisplay
+          indexr={index}
+          entry={ref}
         />
       ))}
     </div>

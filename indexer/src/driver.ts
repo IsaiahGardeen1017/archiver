@@ -1,5 +1,5 @@
 // index.ts
-import { Application, Router } from 'jsr:@oak/oak';
+import { Application, Router, RouterContext } from 'jsr:@oak/oak';
 import { logger } from './api/middlewares/logger.ts';
 import {
 	addTagToEntry,
@@ -12,8 +12,7 @@ import {
 	insertTag,
 } from './SQLite/SQLiteFuncs.ts';
 import { newEntryUplaod } from './handleUpload.ts';
-import { strict } from 'node:assert';
-import { FILE_STORAGE_URL } from './conf.ts';
+import { config } from '../config.ts';
 
 const PORT = 3000;
 
@@ -71,19 +70,29 @@ router.post('/upload', async (ctx) => {
 	ctx.response.headers.set('Location', id);
 });
 
+type Ref = Entry & { link: string };
+function formatRef(ctx: RouterContext<any, any, any>, entry: Entry): Ref {
+	return {
+		...entry,
+		link: `${ctx.request.url.protocol}//${ctx.request.url.host}/media/${entry.guid}.${entry.fileType}`,
+	};
+}
+
 router.get('/refs', async (ctx) => {
 	const entries = getAllEntry();
-	console.log(entries);
+	const outEntries: Ref[] = [];
+	entries.forEach((entry) => {
+		outEntries.push(formatRef(ctx, entry));
+	});
 	ctx.response.status = 200;
-	ctx.response.body = entries;
+	ctx.response.body = outEntries;
 });
 
 router.get('/ref/:refid', async (ctx) => {
 	const refid = ctx.params.refid;
-	const entry: any = getEntry(refid);
-	entry.link = `${ctx.request.url.protocol}//${ctx.request.url.host}/media/${entry.guid}.${entry.fileType}`;
+	const entry: Entry = getEntry(refid);
 	ctx.response.status = 200;
-	ctx.response.body = entry;
+	ctx.response.body = formatRef(ctx, entry);
 });
 
 router.get('/ref/addtag/:id/:tags', async (ctx) => {
@@ -113,7 +122,7 @@ router.get('/ref/addtag/:id/:tags', async (ctx) => {
 router.get('/media/:filepath', async (ctx) => {
 	const filepath = ctx.params.filepath;
 	const extensionless = filepath.split('.')[0];
-	const targetUrl = `${FILE_STORAGE_URL}/file/${extensionless}`;
+	const targetUrl = `${config.rawUrl}/file/${extensionless}`;
 
 	try {
 		const response = await fetch(targetUrl);
