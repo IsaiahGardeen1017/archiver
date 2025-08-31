@@ -1,6 +1,7 @@
 {
     "tasks": {
-        "id": "deno run -A indexDir.ts"
+        "id": "deno run -A indexDir.ts",
+        "dl": "deno run -A downloadToDir.ts"
     },
     "fmt": {
         "options": {

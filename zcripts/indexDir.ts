@@ -1,4 +1,4 @@
-const dir = 'C:\\Users\\isaia\\Downloads\\1234978456341987465ext\\12349784563419874651658487';
+const dir = 'C:\\Users\\isaia\\Downloads\\87564756424575637\\1234978456341987465ext\\12349784563419874651658487';
 
 const dirC = await Deno.readDirSync(dir);
 
