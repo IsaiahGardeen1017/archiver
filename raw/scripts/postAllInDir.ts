@@ -21,6 +21,9 @@ async function postFile(dirName: string, file: Deno.DirEntry) {
 	const resp = await fetch('http://localhost:82/file', {
 		method: 'POST',
 		body: data,
+		headers: {
+			password: '',
+		},
 	});
 	console.log(await resp);
 }

@@ -1,8 +1,10 @@
 import { walk } from 'https://deno.land/std@0.170.0/fs/walk.ts';
 import { deleteFile, getFile, getListOfFileInDir, saveFile } from './fileFuncs.ts';
 import { getRandomInt } from './rando.ts';
+import { handlePost } from './src/handlePost.ts';
+import { decrypt } from './src/crypto.ts';
 
-const FILE_STORAGE_DIR = './volume-file-dir/';
+export const FILE_STORAGE_DIR = './volume-file-dir/';
 
 Deno.serve(async (req) => {
 	try {
@@ -10,21 +12,22 @@ Deno.serve(async (req) => {
 		console.log(`REQUEST - ${req.method} ${url.pathname}`);
 
 		const urlParts = url.pathname.split('/');
-		console.log(urlParts);
+
+		const password = req.headers.get('password') ?? '1234';
 
 		if (req.method === 'GET') {
 			if (urlParts[1] === 'file' && urlParts[2]) {
-				return await handleReadFile(req, urlParts);
+				return await handleReadFile(req, urlParts, password);
 			}
 			if (urlParts[1] === 'file') {
 				return await handleSearchFiles(req);
 			}
 			if (urlParts[1] === 'rand') {
-				return handleRand(req);
+				return handleRand(req, password);
 			}
 		} else if (req.method === 'POST') {
 			if (urlParts[1] === 'file') {
-				return await handlePost(req);
+				return await handlePost(req, password);
 			}
 		} else if (req.method === 'DELETE') {
 			if (urlParts[1] === 'file' && urlParts[2]) {
@@ -43,13 +46,21 @@ Deno.serve(async (req) => {
 	}
 });
 
-async function handleRand(req: Request): Promise<Response> {
+async function handleRand(req: Request, password: string): Promise<Response> {
 	const possible = await getListOfFileInDir(FILE_STORAGE_DIR);
 	if (possible.length === 0) {
 		return returnError(404, 'No files present');
 	}
 	const fileName = possible[getRandomInt(possible.length - 1)];
-	const data = await getFile(`${FILE_STORAGE_DIR}/${fileName}`);
+	const endata = await getFile(`${FILE_STORAGE_DIR}/${fileName}`);
+
+	if (!endata) {
+		return new Response('no files exist', {
+			status: 404,
+		});
+	}
+
+	const data = await decrypt(endata, password);
 
 	return new Response(data, {
 		status: 200,
@@ -59,7 +70,7 @@ async function handleRand(req: Request): Promise<Response> {
 	});
 }
 
-async function handleReadFile(req: Request, urlParts: string[]): Promise<Response> {
+async function handleReadFile(req: Request, urlParts: string[], password: string): Promise<Response> {
 	const fileId = urlParts[2];
 	const filepath = FILE_STORAGE_DIR + fileId;
 
@@ -91,23 +102,10 @@ async function handleReadFile(req: Request, urlParts: string[]): Promise<Respons
 		}
 	}
 
-	return new Response(fileData, {
+	const decryptedData = await decrypt(fileData, password);
+	return new Response(decryptedData, {
 		status: 200,
 	});
-}
-
-async function handlePost(req: Request): Promise<Response> {
-	if (req.body) {
-		const uiarr = new Uint8Array(await (new Response(req.body)).arrayBuffer());
-		const guid = await saveFile(FILE_STORAGE_DIR, uiarr);
-		if (guid) {
-			return new Response(guid, {
-				status: 201,
-			});
-		}
-		return returnError(500, 'Could not save file');
-	}
-	return returnError(400, 'No body provided');
 }
 
 async function handleSearchFiles(req: Request): Promise<Response> {
@@ -118,7 +116,7 @@ async function handleSearchFiles(req: Request): Promise<Response> {
 	});
 }
 
-function returnError(statusCode: number, message: string) {
+export function returnError(statusCode: number, message: string) {
 	return new Response(message, {
 		status: statusCode,
 	});
