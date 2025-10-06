@@ -1,9 +1,8 @@
 {
     "tasks": {
-        "dev": "deno run -A --watch --env-file src/driver.ts"
+        "dev": "deno run -A --watch main.ts"
     },
     "imports": {
-        "@oak/oak": "jsr:@oak/oak",
         "@std/assert": "jsr:@std/assert@1"
     },
     "fmt": {

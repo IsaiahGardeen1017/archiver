@@ -56,14 +56,15 @@ router.post('/upload', async (ctx) => {
 	const desc = formDataBody.get('desc');
 	const description = typeof desc === 'string' ? desc : undefined;
 	const src = formDataBody.get('src');
-	console.log(src);
 	const source = typeof src === 'string' ? src : undefined;
-	console.log(source);
 	const t = formDataBody.get('tags');
 	const tags = typeof t === 'string' ? t.split(',') : undefined;
 
-	const id = await newEntryUplaod(file, description, source, tags);
-	console.log(id);
+	const p = formDataBody.get('password');
+	const password = typeof p === 'string' ? p : '1234';
+
+	const id = await newEntryUplaod(file, password, description, source, tags);
+	console.log('id', id);
 
 	ctx.response.status = 201;
 	ctx.response.body = id;
@@ -86,6 +87,17 @@ router.get('/refs', async (ctx) => {
 	});
 	ctx.response.status = 200;
 	ctx.response.body = outEntries;
+});
+
+router.get('/rand', async (ctx) => {
+	const entries = getAllEntry();
+	const outEntries: Ref[] = [];
+	entries.forEach((entry) => {
+		outEntries.push(formatRef(ctx, entry));
+	});
+	outEntries.sort(() => Math.random() - 0.5);
+	ctx.response.status = 200;
+	ctx.response.body = outEntries[0];
 });
 
 router.get('/ref/:refid', async (ctx) => {
@@ -124,8 +136,13 @@ router.get('/media/:filepath', async (ctx) => {
 	const extensionless = filepath.split('.')[0];
 	const targetUrl = `${config.rawUrl}/file/${extensionless}`;
 
+	const password = ctx.request.headers.get('password') ?? '1234';
 	try {
-		const response = await fetch(targetUrl);
+		const response = await fetch(targetUrl, {
+			headers: {
+				password: password,
+			},
+		});
 		if (!response.ok) {
 			ctx.response.status = response.status;
 			ctx.response.body = `Failed to fetch from upstream: ${response.statusText}`;

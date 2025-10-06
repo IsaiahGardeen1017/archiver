@@ -1,13 +1,24 @@
 import { config } from '../config.ts';
 import { Entry, insertEntry } from './SQLite/SQLiteFuncs.ts';
 
-export async function newEntryUplaod(file: File, description?: string, source?: string, tags?: string[]): Promise<string> {
-	const data: Uint8Array = await file.bytes();
+const ffprobePath = './ffprobe.exe';
+
+export async function newEntryUplaod(
+	file: File,
+	password: string,
+	description?: string,
+	source?: string,
+	tags?: string[],
+): Promise<string> {
+	const data: Uint8Array<ArrayBuffer> = await file.bytes();
 
 	const hostname = config.rawUrl;
 	const resp = await fetch(`${hostname}/file`, {
 		method: 'POST',
 		body: data,
+		headers: {
+			password: password,
+		},
 	});
 
 	if (resp.status !== 201 && resp.status !== 200) {
@@ -19,12 +30,17 @@ export async function newEntryUplaod(file: File, description?: string, source?: 
 	const fileName = file.name;
 	const extension = fileName.includes('.') ? fileName.split('.').pop() : undefined;
 
+	const height = 0;
+	const width = 0;
+
 	const newEntry: Entry = {
 		guid,
 		description,
 		source,
 		fileType: extension,
 		tags,
+		height,
+		width,
 	};
 
 	const id = insertEntry(newEntry);

@@ -2,28 +2,34 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
-import * as $_404 from "./routes/_404.tsx";
-import * as $_app from "./routes/_app.tsx";
-import * as $api_path_ from "./routes/api/[...path].ts";
-import * as $index from "./routes/index.tsx";
-import * as $upload from "./routes/upload.tsx";
-import * as $Counter from "./islands/Counter.tsx";
-import * as $EntryUploader from "./islands/EntryUploader.tsx";
-import type { Manifest } from "$fresh/server.ts";
+import * as $_404 from './routes/_404.tsx';
+import * as $_app from './routes/_app.tsx';
+import * as $api_path_ from './routes/api/[...path].ts';
+import * as $entry_id_ from './routes/entry/[id].tsx';
+import * as $entry_delete_id_ from './routes/entry/delete/[id].tsx';
+import * as $entry_r from './routes/entry/r.tsx';
+import * as $index from './routes/index.tsx';
+import * as $upload from './routes/upload.tsx';
+import * as $Counter from './islands/Counter.tsx';
+import * as $EntryUploader from './islands/EntryUploader.tsx';
+import type { Manifest } from '$fresh/server.ts';
 
 const manifest = {
-  routes: {
-    "./routes/_404.tsx": $_404,
-    "./routes/_app.tsx": $_app,
-    "./routes/api/[...path].ts": $api_path_,
-    "./routes/index.tsx": $index,
-    "./routes/upload.tsx": $upload,
-  },
-  islands: {
-    "./islands/Counter.tsx": $Counter,
-    "./islands/EntryUploader.tsx": $EntryUploader,
-  },
-  baseUrl: import.meta.url,
+	routes: {
+		'./routes/_404.tsx': $_404,
+		'./routes/_app.tsx': $_app,
+		'./routes/api/[...path].ts': $api_path_,
+		'./routes/entry/[id].tsx': $entry_id_,
+		'./routes/entry/delete/[id].tsx': $entry_delete_id_,
+		'./routes/entry/r.tsx': $entry_r,
+		'./routes/index.tsx': $index,
+		'./routes/upload.tsx': $upload,
+	},
+	islands: {
+		'./islands/Counter.tsx': $Counter,
+		'./islands/EntryUploader.tsx': $EntryUploader,
+	},
+	baseUrl: import.meta.url,
 } satisfies Manifest;
 
 export default manifest;

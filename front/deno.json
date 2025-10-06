@@ -35,5 +35,13 @@
         "jsx": "react-jsx",
         "jsxImportSource": "preact"
     },
-    "nodeModulesDir": "auto"
+    "nodeModulesDir": "auto",
+    "fmt": {
+        "options": {
+            "useTabs": true,
+            "singleQuote": true,
+            "proseWrap": "never",
+            "lineWidth": 135
+        }
+    }
 }

@@ -18,6 +18,8 @@ export type Entry = {
 	source?: string;
 	fileType?: string;
 	tags?: string[];
+	height: number;
+	width: number;
 };
 
 export function initializeSQLite() {
@@ -28,7 +30,9 @@ export function initializeSQLite() {
             guid TEXT UNIQUE,
             fileType TEXT,
             description TEXT,
-            source TEXT
+            source TEXT,
+            height INTEGER,
+            width INTEGER
         );
 
         CREATE TABLE IF NOT EXISTS tags (
@@ -99,7 +103,7 @@ export function insertEntry(entry: Entry): string {
 	return id || '';
 }
 
-type EntryRow = [number, string, string, string, string];
+type EntryRow = [number, string, string, string, string, number, number];
 
 export function getEntry(id: string): Entry {
 	const db = dbRef();
@@ -182,11 +186,15 @@ function rowToEntry(row: EntryRow): Entry {
 	const fileType = row[2] || undefined;
 	const description = row[3] || undefined;
 	const source = row[4] || undefined;
+	const height = row[5];
+	const width = row[6];
 	return {
 		id,
 		guid,
 		fileType,
 		description,
 		source,
+		height,
+		width,
 	};
 }

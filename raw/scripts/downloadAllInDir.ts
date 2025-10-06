@@ -8,7 +8,18 @@ async function search(): Promise<string[]> {
 const guids = await search();
 
 guids.forEach(async (guid) => {
-	const resp = await fetch('http://localhost:82/file/' + guid);
-	const uiarr: Uint8Array = await resp.bytes();
-	Deno.writeFileSync(`./temp-2/${guid}`, uiarr);
+	try {
+		const resp = await fetch('http://localhost:82/file/' + guid, {
+			headers: {
+				password: 'kitfisto',
+			},
+		});
+		if (resp.status != 200) {
+			console.error(resp);
+		}
+		const uiarr: Uint8Array = await resp.bytes();
+		Deno.writeFileSync(`./temp/raw/${guid}`, uiarr);
+	} catch (err) {
+		console.error(err);
+	}
 });

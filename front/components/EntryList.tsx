@@ -21,12 +21,14 @@ export type EntryReference = {
 export function EntryList(props: ImageGridProps) {
   const refs = props.references;
   return (
-    <div>
+    <div class="w-full columns-[300px] justify-center">
       {refs.map((ref, index) => (
-        <EntryDisplay
-          indexr={index}
-          entry={ref}
-        />
+        <div>
+          <EntryDisplay
+            indexr={index}
+            entry={ref}
+          />
+        </div>
       ))}
     </div>
   );
