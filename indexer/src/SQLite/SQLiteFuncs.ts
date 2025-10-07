@@ -11,19 +11,25 @@ function dbRef(): DB {
 	return db;
 }
 
+export type OrientationType = 'Portrait' | 'Landscape' | 'Unknown' | 'Square';
+
 export type Entry = {
+	tags?: string[];
 	id?: number;
 	guid?: string;
+	fileType?: string;
 	description?: string;
 	source?: string;
-	fileType?: string;
-	tags?: string[];
 	height: number;
 	width: number;
+	orientation: OrientationType;
+	specSource?: string;
+	hash: string;
 };
 
 export function initializeSQLite() {
 	const db = dbRef();
+	//specSource TEXT,
 	db.execute(`
         CREATE TABLE IF NOT EXISTS entry (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +38,10 @@ export function initializeSQLite() {
             description TEXT,
             source TEXT,
             height INTEGER,
-            width INTEGER
+            width INTEGER,
+            orientation TEXT,
+            specSource TEXT,
+            hash TEXT
         );
 
         CREATE TABLE IF NOT EXISTS tags (
@@ -79,9 +88,19 @@ export function insertEntry(entry: Entry): string {
 
 	db.transaction(() => {
 		db.query(
-			`INSERT INTO entry (guid, fileType, description, source)
-             VALUES (?, ?, ?, ?)`,
-			[entry.guid, entry.fileType, entry.description, entry.source],
+			`INSERT INTO entry (guid, fileType, description, source, height, width, orientation, specSource, hash)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			[
+				entry.guid,
+				entry.fileType,
+				entry.description,
+				entry.source,
+				entry.height,
+				entry.width,
+				entry.orientation,
+				entry.specSource,
+				entry.hash,
+			],
 		);
 
 		id = db.lastInsertRowId;
@@ -103,13 +122,14 @@ export function insertEntry(entry: Entry): string {
 	return id || '';
 }
 
-type EntryRow = [number, string, string, string, string, number, number];
+type EntryRow = [number, string, string, string, string, number, number, 'Portrait' | 'Landscape' | 'Unknown', string, string];
 
 export function getEntry(id: string): Entry {
 	const db = dbRef();
-	const row = [...db.query<EntryRow>('SELECT id, guid, fileType, description, source FROM entry WHERE id = ?', [
-		id,
-	])][0];
+	const row = [...db.query<EntryRow>(
+		'SELECT id, guid, fileType, description, source, height, width, orientation, specSource, hash FROM entry WHERE id = ?',
+		[id],
+	)][0];
 	if (!row) throw new Error('Entry not found');
 
 	const entry = rowToEntry(row);
@@ -131,7 +151,7 @@ export function getAllEntry(): Entry[] {
 
 	for (
 		const row of db.query<EntryRow>(
-			'SELECT id, guid, fileType, description, source FROM entry',
+			'SELECT id, guid, fileType, description, source, height, width, orientation, specSource, hash FROM entry',
 		)
 	) {
 		const newEntry = rowToEntry(row);
@@ -188,6 +208,9 @@ function rowToEntry(row: EntryRow): Entry {
 	const source = row[4] || undefined;
 	const height = row[5];
 	const width = row[6];
+	const orientation = row[7];
+	const specSource = row[8] || undefined;
+	const hash = row[9];
 	return {
 		id,
 		guid,
@@ -196,5 +219,8 @@ function rowToEntry(row: EntryRow): Entry {
 		source,
 		height,
 		width,
+		orientation,
+		specSource,
+		hash,
 	};
 }

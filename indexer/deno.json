@@ -4,7 +4,10 @@
     },
     "imports": {
         "@oak/oak": "jsr:@oak/oak",
-        "@std/assert": "jsr:@std/assert@1"
+        "@std/assert": "jsr:@std/assert@1",
+        "sharp": "npm:sharp",
+        "mp4box": "npm:mp4box",
+        "ts-ebml": "npm:ts-ebml"
     },
     "fmt": {
         "options": {

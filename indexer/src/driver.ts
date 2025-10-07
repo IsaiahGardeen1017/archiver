@@ -57,13 +57,15 @@ router.post('/upload', async (ctx) => {
 	const description = typeof desc === 'string' ? desc : undefined;
 	const src = formDataBody.get('src');
 	const source = typeof src === 'string' ? src : undefined;
+	const specSource = formDataBody.get('specSource');
+	const specSrc = typeof specSource === 'string' ? specSource : undefined;
 	const t = formDataBody.get('tags');
 	const tags = typeof t === 'string' ? t.split(',') : undefined;
 
 	const p = formDataBody.get('password');
 	const password = typeof p === 'string' ? p : '1234';
 
-	const id = await newEntryUplaod(file, password, description, source, tags);
+	const id = await newEntryUplaod(file, password, description, source, specSrc, tags);
 	console.log('id', id);
 
 	ctx.response.status = 201;
