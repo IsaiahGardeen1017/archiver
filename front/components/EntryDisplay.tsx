@@ -14,34 +14,35 @@ export function EntryDisplay(props: EntryDisplayProps) {
 		case 'webm':
 		case 'mp4':
 			return (
-				<div>
+				<div class='border-4 border-amber-500'>
 					<video
 						autoplay
 						muted
 						loop
 						controls
-						class='w-96 inline-block border-4 border-amber-500'
+						class='w-96 inline-block'
 					>
-						<source src={`/api/media/${props.entry.guid}.${props.entry.fileType}`} type='video/webm' />
+						<source src={`/api/media/${props.entry.guid}.${props.entry.fileType}`} type={`video/${fileType}`} />
 						Your browser does not support the video tag.
 					</video>
 					<a href={`/entry/${props.entry.id}`}>
-						{props.entry.id} - {props.entry.description}
+						{props.entry.id} - {props.entry.description} ({props.entry.fileType})
 					</a>
 				</div>
 			);
 		default:
 			return (
-				<div>
+				<div class='border-4 border-amber-500'>
 					<a href={`/entry/${props.entry.id}`}>
 						<img
 							key={props.indexr}
 							src={`/api/media/${props.entry.guid}.${props.entry.fileType}`}
 							alt={description}
 							loading='lazy'
-							class='border-4 border-amber-500 w-96 inline-block'
+							class='w-96 inline-block'
 						/>
 					</a>
+					{props.entry.id} - {props.entry.description} ({props.entry.fileType})
 				</div>
 			);
 	}

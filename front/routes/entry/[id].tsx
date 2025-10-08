@@ -68,13 +68,14 @@ export function SingleImageDisplay(props: EntryDisplayProps) {
 			section = (
 				<div>
 					<video
+						playsInline
+						playsinline
 						autoplay
-						muted
 						loop
 						controls
 						class='object-contain w-full h-full max-h-[85vh] max-w-[90vw]'
 					>
-						<source src={`/api/media/${props.entry.guid}.${props.entry.fileType}`} type='video/webm' />
+						<source src={`/api/media/${props.entry.guid}.${props.entry.fileType}`} type={`video/${fileType}`} />
 						Your browser does not support the video tag.
 					</video>
 				</div>
